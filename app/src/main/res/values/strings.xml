@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Freeze Monitor</string>
+    <string name="root_title">Prompt</string>
+    <string name="root_message">Root access not obtained, the app cannot be used</string>
+    <string name="confirm">OK</string>
+    <string name="about">About</string>
+    <string name="mounted_freezer">Mounted:</string>
+    <string name="source_code">Source Code:</string>
+    <string name="developer">Developer:</string>
+    <string name="author">rcmiku</string>
+    <string name="app_info">Android App Process Freezer Monitor</string>
+    <string name="mount_freezer_empty">None</string>
+    <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="app_list">App List</string>
+    <string name="freeze_badge">%s Freezing</string>
+    <plurals name="process">
+        <item quantity="one">%1$d Process</item>
+        <item quantity="other">%1$d Processes</item>
+    </plurals>
+    <string name="frozen">Frozen %s</string>
+    <string name="size_in_mb">%dMB</string>
+    <string name="size_in_gb">%.2fGB</string>
+</resources>

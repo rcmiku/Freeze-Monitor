@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Freeze Monitor</string>
+    <string name="root_title">提示</string>
+    <string name="root_message">未获取到Root权限,软件无法使用</string>
+    <string name="confirm">确定</string>
+    <string name="about">关于</string>
+    <string name="mounted_freezer">已挂载:</string>
+    <string name="source_code">源代码:</string>
+    <string name="developer">开发者:</string>
+    <string name="author">rcmiku</string>
+    <string name="app_info">Android 应用进程冻结监视器</string>
+    <string name="mount_freezer_empty">暂无</string>
+    <string name="search">搜索</string>
+    <string name="cancel">取消</string>
+    <string name="app_list">应用列表</string>
+    <string name="freeze_badge">%s冻结中</string>
+    <plurals name="process">
+        <item quantity="other">%1$d个进程</item>
+    </plurals>
+    <string name="frozen">已冻结%s个</string>
+    <string name="size_in_mb">%dMB</string>
+    <string name="size_in_gb">%.2fGB</string>
+</resources>
