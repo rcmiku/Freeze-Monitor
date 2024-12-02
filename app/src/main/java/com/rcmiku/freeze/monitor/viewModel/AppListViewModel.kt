@@ -3,7 +3,6 @@ package com.rcmiku.freeze.monitor.viewModel
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rcmiku.freeze.monitor.model.AppInfo
@@ -56,14 +55,12 @@ class AppListViewModel : ViewModel() {
 
     private fun getInstalledApps(context: Context): List<ApplicationInfo> {
         val packageManager: PackageManager = context.packageManager
-        val installedPackages = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            packageManager.getInstalledApplications(
-                PackageManager.ApplicationInfoFlags.of(
-                    PackageManager.MATCH_UNINSTALLED_PACKAGES.toLong()
-                )
-            )
-        } else {
-            packageManager.getInstalledApplications(PackageManager.MATCH_UNINSTALLED_PACKAGES)
+        val installedPackages = mutableListOf<ApplicationInfo>()
+        val regex = Regex("package:(\\S+)")
+        val pmPackageList = Shell.pmPackageList().toString().trimIndent()
+        val packageNameList = regex.findAll(pmPackageList).map { it.groupValues[1] }.toList()
+        packageNameList.map {
+            installedPackages.add(packageManager.getApplicationInfo(it,0))
         }
         return installedPackages
     }

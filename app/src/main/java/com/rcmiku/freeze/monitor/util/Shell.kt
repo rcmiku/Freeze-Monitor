@@ -24,4 +24,6 @@ object Shell {
     fun getRunningProcess(command: String = "ps -e | awk '{print \$6 \" \" \$9 \" \" \$5}'") =
         cmd(command = command).second
 
+    fun pmPackageList(command: String = "pm list package") = cmd(command = command).second
+
 }
