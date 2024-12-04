@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import com.rcmiku.freeze.monitor.ui.FmApp
+import com.rcmiku.freeze.monitor.util.AppContext
 import com.rcmiku.freeze.monitor.viewModel.AppListViewModel
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.theme.darkColorScheme
@@ -17,9 +18,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
+        AppContext.init(this)
         val appListViewModel:AppListViewModel by viewModels()
-        appListViewModel.updateInstalledApps(this)
-        appListViewModel.updateFilterApps(this)
         setContent {
             MiuixTheme(
                 colors = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()

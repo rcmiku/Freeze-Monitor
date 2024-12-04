@@ -21,4 +21,9 @@
     <string name="frozen">Frozen %s</string>
     <string name="size_in_mb">%dMB</string>
     <string name="size_in_gb">%.2fGB</string>
+    <string-array name="dropdownOptions">
+        <item>User Apps</item>
+        <item>System Apps</item>
+        <item>About</item>
+    </string-array>
 </resources>

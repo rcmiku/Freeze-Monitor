@@ -21,4 +21,9 @@
     <string name="frozen">已冻结%s个</string>
     <string name="size_in_mb">%dMB</string>
     <string name="size_in_gb">%.2fGB</string>
+    <string-array name="dropdownOptions">
+        <item>用户应用</item>
+        <item>系统应用</item>
+        <item>关于</item>
+    </string-array>
 </resources>

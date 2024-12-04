@@ -13,6 +13,7 @@ import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
+import kotlin.system.exitProcess
 
 @Composable
 fun RootDialog(showDialog: MutableState<Boolean>) {
@@ -26,6 +27,7 @@ fun RootDialog(showDialog: MutableState<Boolean>) {
             show = showDialog,
             onDismissRequest = {
                 dismissDialog(showDialog)
+                exitProcess(0)
             },
         ) {
             Row(
@@ -37,6 +39,7 @@ fun RootDialog(showDialog: MutableState<Boolean>) {
                     colors = ButtonDefaults.textButtonColorsPrimary(),
                     onClick = {
                         dismissDialog(showDialog)
+                        exitProcess(0)
                     }
                 )
             }

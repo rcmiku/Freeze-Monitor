@@ -1,6 +1,5 @@
 package com.rcmiku.freeze.monitor.ui.components
 
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -12,12 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -28,18 +25,17 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.rcmiku.freeze.monitor.BuildConfig
 import com.rcmiku.freeze.monitor.R
+import com.rcmiku.freeze.monitor.util.AppContext
 import com.rcmiku.freeze.monitor.util.Shell
-import top.yukonga.miuix.kmp.basic.Icon
-import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.extra.SuperDialog
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.MiuixPopupUtil.Companion.dismissDialog
 
 @Composable
-fun AboutDialog(context: Context) {
+fun AboutDialog(showDialog: MutableState<Boolean>) {
 
-    val showDialog = remember { mutableStateOf(false) }
+    val context = AppContext.context
     val packageManager: PackageManager = context.packageManager
     val applicationInfo = context.applicationInfo
     val icon = packageManager.getApplicationIcon(applicationInfo)
@@ -47,18 +43,6 @@ fun AboutDialog(context: Context) {
     val v2UID = Shell.cmd("ls /sys/fs/cgroup/uid_0/cgroup.freeze").first
     val v2frozen = Shell.cmd("ls /sys/fs/cgroup/frozen/cgroup.freeze").first
     val uriHandler = LocalUriHandler.current
-
-    IconButton(
-        modifier = Modifier.padding(end = 18.dp),
-        onClick = {
-            showDialog.value = true
-        },
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_setting),
-            contentDescription = "Setting"
-        )
-    }
 
     SuperDialog(
         show = showDialog,
