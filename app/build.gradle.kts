@@ -12,8 +12,8 @@ android {
         applicationId = "com.rcmiku.freeze.monitor"
         minSdk = 31
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 11
+        versionName = "1.1"
         resourceConfigurations += listOf("en","zh-rCN")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
