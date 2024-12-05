@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -14,7 +16,6 @@ android {
         targetSdk = 35
         versionCode = 11
         versionName = "1.1"
-        resourceConfigurations += listOf("en", "zh-rCN")
     }
 
     signingConfigs {
@@ -53,6 +54,10 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    androidResources {
+        generateLocaleConfig = true
     }
 }
 
