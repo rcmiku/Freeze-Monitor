@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Freeze Monitor</string>
     <string name="root_title">提示</string>
-    <string name="root_message">未获取到 Root 权限,软件无法使用</string>
+    <string name="root_message">未获取到 Root 权限，软件无法使用</string>
     <string name="confirm">确定</string>
     <string name="about">关于</string>
     <string name="mounted_freezer">已挂载：</string>
