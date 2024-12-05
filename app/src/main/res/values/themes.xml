@@ -2,4 +2,5 @@
 <resources>
 
     <style name="Theme.FreezeMonitor" parent="android:Theme.Material.Light.NoActionBar" />
+
 </resources>
