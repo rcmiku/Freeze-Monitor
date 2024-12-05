@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import com.android.build.gradle.tasks.PackageAndroidArtifact
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -58,6 +60,28 @@ android {
 
     androidResources {
         generateLocaleConfig = true
+    }
+
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/*.version", // https://stackoverflow.com/a/58956288
+                "META-INF/**/LICENSE.txt",
+                "DebugProbesKt.bin", // https://github.com/Kotlin/kotlinx.coroutines?tab=readme-ov-file#avoiding-including-the-debug-infrastructure-in-the-resulting-apk
+                "kotlin-tooling-metadata.json"
+            )
+            pickFirsts += "META-INF/androidx.compose.ui_ui.version" // For Layout Inspector
+        }
+    }
+
+    // https://stackoverflow.com/a/77745844
+    tasks.withType<PackageAndroidArtifact> {
+        doFirst { appMetadata.asFile.orNull?.writeText("") }
     }
 }
 
