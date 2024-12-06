@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         window.isNavigationBarContrastEnforced = false
         AppContext.init(this)
-        val appListViewModel:AppListViewModel by viewModels()
+        val appListViewModel: AppListViewModel by viewModels()
         setContent {
             MiuixTheme(
                 colors = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
