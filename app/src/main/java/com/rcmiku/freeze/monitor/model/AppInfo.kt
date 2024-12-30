@@ -6,9 +6,14 @@ data class AppInfo(
     val appName: String,
     val packageName: String,
     val appIcon: Drawable,
+    val appState: AppState,
+    val flagSystem: Boolean,
+)
+
+
+data class AppState(
     val frozenProcess: Int,
     val runningProcess: Int,
-    val appRes: Int,
-    val freezeType: String,
-    val flagSystem: Boolean
+    val processRes: String,
+    val freezeType: String?
 )

@@ -19,8 +19,6 @@
         <item quantity="other">%1$d 个进程</item>
     </plurals>
     <string name="frozen">已冻结 %s 个</string>
-    <string name="size_in_mb">%d MB</string>
-    <string name="size_in_gb">%.2f GB</string>
     <string-array name="dropdownOptions">
         <item>用户应用</item>
         <item>系统应用</item>

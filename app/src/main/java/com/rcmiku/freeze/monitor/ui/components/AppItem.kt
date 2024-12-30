@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
@@ -28,7 +28,7 @@ fun AppItem(appInfo: AppInfo) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .height(68.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -46,35 +46,33 @@ fun AppItem(appInfo: AppInfo) {
             )
             Text(
                 text = buildString {
-                    append(pluralStringResource(R.plurals.process,appInfo.runningProcess,appInfo.runningProcess))
-                    if (appInfo.frozenProcess > 0) {
+                    append(
+                        pluralStringResource(
+                            R.plurals.process,
+                            appInfo.appState.runningProcess,
+                            appInfo.appState.runningProcess
+                        )
+                    )
+                    if (appInfo.appState.frozenProcess > 0) {
                         append(" ")
-                        append(stringResource(R.string.frozen, appInfo.frozenProcess))
+                        append(stringResource(R.string.frozen, appInfo.appState.frozenProcess))
                     }
                 },
                 style = MiuixTheme.textStyles.subtitle,
                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant
             )
             Text(
-                text = buildString {
-                    if (appInfo.appRes < 1024) {
-                        append(stringResource(R.string.size_in_mb, appInfo.appRes))
-                    } else {
-                        append(
-                            stringResource(R.string.size_in_gb, appInfo.appRes / 1024f),
-                        )
-                    }
-                },
+                text = appInfo.appState.processRes,
                 style = MiuixTheme.textStyles.footnote1,
                 color = MiuixTheme.colorScheme.onSurfaceContainerVariant,
             )
         }
-        if (appInfo.freezeType.isNotEmpty())
+        if (appInfo.appState.freezeType != null)
             Badge(
                 containerColor = MiuixTheme.colorScheme.onPrimaryVariant
             ) {
                 Text(
-                    text = stringResource(R.string.freeze_badge, appInfo.freezeType),
+                    text = stringResource(R.string.freeze_badge, appInfo.appState.freezeType),
                     style = MiuixTheme.textStyles.footnote2,
                     color = MiuixTheme.colorScheme.primaryVariant,
                     fontWeight = FontWeight.SemiBold

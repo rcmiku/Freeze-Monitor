@@ -18,9 +18,6 @@ object Shell {
     fun isGranted(command: String = "whoami"): Boolean =
         (cmd(command = command).second?.trimEnd() ?: false) == "root"
 
-    fun getFreezeStatus(command: String = "ps -e | grep -E 'refrigerator|do_freezer|signal' | awk '{print \$6 \" \" \$9}'") =
-        cmd(command = command).second
-
     fun getRunningProcess(command: String = "ps -e | awk '{print \$6 \" \" \$9 \" \" \$5}'") =
         cmd(command = command).second
 

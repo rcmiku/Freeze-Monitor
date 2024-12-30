@@ -19,8 +19,6 @@
         <item quantity="other">%1$d Processes</item>
     </plurals>
     <string name="frozen">Frozen %s</string>
-    <string name="size_in_mb">%dMB</string>
-    <string name="size_in_gb">%.2fGB</string>
     <string-array name="dropdownOptions">
         <item>User Apps</item>
         <item>System Apps</item>

@@ -1,19 +1,23 @@
 package com.rcmiku.freeze.monitor.ui
 
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +32,9 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.rcmiku.freeze.monitor.R
 import com.rcmiku.freeze.monitor.ui.components.AboutDialog
 import com.rcmiku.freeze.monitor.ui.components.AppItem
@@ -35,12 +42,12 @@ import com.rcmiku.freeze.monitor.ui.components.RootDialog
 import com.rcmiku.freeze.monitor.viewModel.AppListViewModel
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInputScale
-import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
+import kotlinx.coroutines.delay
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -80,6 +87,8 @@ fun FmApp(viewModel: AppListViewModel) {
     val showAboutDialog = remember { mutableStateOf(false) }
     val showSystemApp = viewModel.showSystemApp.collectAsState()
     val dropdownOptions = stringArrayResource(R.array.dropdownOptions)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val isActive = remember { mutableStateOf(false) }
     val isLoading = viewModel.filterApps.collectAsState()
 
     val hazeStyleTopAppBar = HazeStyle(
@@ -93,6 +102,29 @@ fun FmApp(viewModel: AppListViewModel) {
         )
     )
 
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                isActive.value = true
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                isActive.value = false
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(isActive.value) {
+        while (isActive.value) {
+            viewModel.getFilterApps()
+            delay(5000L)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -101,13 +133,9 @@ fun FmApp(viewModel: AppListViewModel) {
                     state = hazeState,
                     style = hazeStyleTopAppBar,
                 ) {
-                    progressive = HazeProgressive.verticalGradient(
-                        startIntensity = 0.6f, endIntensity = 0f
-                    )
                     inputScale = HazeInputScale.Auto
                 },
-                title = "",
-                largeTitle = stringResource(R.string.app_name),
+                title = stringResource(R.string.app_name),
                 scrollBehavior = scrollBehavior,
                 actions = {
                     if (isTopPopupExpanded.value) {
@@ -157,7 +185,7 @@ fun FmApp(viewModel: AppListViewModel) {
 
                     IconButton(
                         modifier = Modifier
-                            .padding(end = 21.dp)
+                            .padding(end = 18.dp)
                             .size(40.dp),
                         onClick = {
                             isTopPopupExpanded.value = true
@@ -173,93 +201,98 @@ fun FmApp(viewModel: AppListViewModel) {
         },
         contentWindowInsets = WindowInsets.safeDrawing
     ) { padding ->
-        AnimatedContent(
-            targetState = isLoading.value.isEmpty()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxHeight()
+                .haze(state = hazeState),
+            topAppBarScrollBehavior = scrollBehavior,
+            contentPadding = padding
         ) {
-            if (!it) {
-                LazyColumn(
+            item {
+                SearchBar(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .haze(state = hazeState),
-                    topAppBarScrollBehavior = scrollBehavior,
-                    contentPadding = padding
-                ) {
-                    item {
-                        SearchBar(
-                            modifier = Modifier
-                                .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 6.dp),
-                            inputField = {
-                                InputField(
-                                    query = searchValue.value,
-                                    onQueryChange = {
-                                        viewModel.updateByQuery(
-                                            it,
-                                            showSystemApp.value
-                                        )
-                                    },
-                                    onSearch = {
-                                        keyboardController?.hide()
-                                    },
-                                    expanded = expanded,
-                                    onExpandedChange = { expanded = it },
-                                    label = stringResource(R.string.search),
-                                    leadingIcon = {
-                                        Icon(
-                                            modifier = Modifier.padding(
-                                                start = 12.dp,
-                                                end = 8.dp,
-                                                top = 14.dp,
-                                                bottom = 14.dp
-                                            ),
-                                            imageVector = MiuixIcons.Search,
-                                            tint = MiuixTheme.colorScheme.onSurfaceContainer,
-                                            contentDescription = "Search"
-                                        )
-                                    },
+                        .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 6.dp),
+                    inputField = {
+                        InputField(
+                            query = searchValue.value,
+                            onQueryChange = {
+                                viewModel.updateByQuery(
+                                    it,
+                                    showSystemApp.value
                                 )
                             },
-                            outsideRightAction = {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(start = 12.dp)
-                                        .clickable(
-                                            interactionSource = null,
-                                            indication = null
-                                        ) {
-                                            expanded = false
-                                            viewModel.updateByQuery("", showSystemApp.value)
-                                        },
-                                    text = stringResource(R.string.cancel),
-                                    color = MiuixTheme.colorScheme.primary
-                                )
+                            onSearch = {
+                                keyboardController?.hide()
                             },
                             expanded = expanded,
-                            onExpandedChange = { expanded = it }
-                        ) {
-                        }
+                            onExpandedChange = { expanded = it },
+                            label = stringResource(R.string.search),
+                            leadingIcon = {
+                                Icon(
+                                    modifier = Modifier.padding(
+                                        start = 12.dp,
+                                        end = 8.dp,
+                                        top = 14.dp,
+                                        bottom = 14.dp
+                                    ),
+                                    imageVector = MiuixIcons.Search,
+                                    tint = MiuixTheme.colorScheme.onSurfaceContainer,
+                                    contentDescription = "Search"
+                                )
+                            },
+                        )
+                    },
+                    outsideRightAction = {
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 12.dp)
+                                .clickable(
+                                    interactionSource = null,
+                                    indication = null
+                                ) {
+                                    expanded = false
+                                    viewModel.updateByQuery("", showSystemApp.value)
+                                },
+                            text = stringResource(R.string.cancel),
+                            color = MiuixTheme.colorScheme.primary
+                        )
+                    },
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it }
+                ) {
+                }
+                AnimatedVisibility(
+                    visible = appList.value.isNotEmpty(),
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Column {
                         SmallTitle(text = stringResource(R.string.app_list))
-                        if (appList.value.isNotEmpty())
-                            Card(
-                                modifier = Modifier.padding(horizontal = 12.dp),
-                                insideMargin = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
-                            ) {
-                                for (app in appList.value) {
-                                    AppItem(appInfo = app)
-                                }
+                        Card(
+                            modifier = Modifier.padding(horizontal = 12.dp),
+                            insideMargin = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+                        ) {
+                            for (app in appList.value) {
+                                AppItem(appInfo = app)
                             }
+                        }
                     }
                 }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    LoadingIndicator(color = MiuixTheme.colorScheme.onPrimaryVariant)
-                }
             }
+        }
+        AnimatedVisibility(
+            visible = isLoading.value.isEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) { LoadingIndicator(color = MiuixTheme.colorScheme.onPrimaryVariant) }
         }
     }
     AboutDialog(showAboutDialog)
